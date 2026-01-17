@@ -10,6 +10,8 @@
 
 **XPhotoShop** 是一个使用纯 JavaScript 和 HTML5 开发的在线PhotoShop编辑器。没有使用任何第三方框架，插件化开发机制，主程序只实现基础的绘图功能和插件接口。
 
+![image-main](main.png)
+
 ### 核心特性
 
 **完整功能**：
