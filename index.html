@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>XPhotoShop https://github.com/fengdeyingzi/XPhotoShop</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://unpkg.com/ag-psd/dist/bundle.js"></script>
+</head>
+<body>
+
+<header>
+    <div style="font-size: 12px; color: white;">XPhotoShop </div>
+</header>
+
+<nav class="menu-bar">
+    <div class="menu-item">
+        <span class="menu-title">文件</span>
+        <div class="menu-dropdown">
+            <div class="menu-option" data-action="open-psd">打开 PSD...</div>
+            <div class="menu-option" data-action="save-psd">保存 PSD</div>
+            <div class="menu-divider"></div>
+            <div class="menu-option" data-action="export-png">导出 PNG</div>
+        </div>
+    </div>
+    <div class="menu-item">
+        <span class="menu-title">编辑</span>
+        <div class="menu-dropdown">
+            <div class="menu-option" data-action="undo">撤销</div>
+            <div class="menu-option" data-action="redo">重做</div>
+        </div>
+    </div>
+    <div class="menu-item">
+        <span class="menu-title">图像</span>
+        <div class="menu-dropdown">
+            <div class="menu-option" data-action="resize">调整画布大小...</div>
+        </div>
+    </div>
+    <div class="menu-item">
+        <span class="menu-title">图层</span>
+        <div class="menu-dropdown">
+            <div class="menu-option" data-action="new-layer">新建图层</div>
+            <div class="menu-option" data-action="new-group">新建文件夹</div>
+            <div class="menu-option" data-action="delete-layer">删除图层</div>
+            <div class="menu-divider"></div>
+            <div class="menu-option" data-action="move-to-group">移动到文件夹...</div>
+            <div class="menu-option" data-action="move-to-root">移出文件夹</div>
+            <div class="menu-divider"></div>
+            <div class="menu-option" data-action="merge-down">向下合并</div>
+        </div>
+    </div>
+    <div class="menu-item">
+        <span class="menu-title">选择</span>
+        <div class="menu-dropdown">
+            <div class="menu-option" data-action="select-all">全选</div>
+            <div class="menu-option" data-action="deselect">取消选择</div>
+        </div>
+    </div>
+    <div class="menu-item">
+        <span class="menu-title">滤镜</span>
+        <div class="menu-dropdown">
+        </div>
+    </div>
+    <div class="menu-item">
+        <span class="menu-title">视图</span>
+        <div class="menu-dropdown">
+        </div>
+    </div>
+    <div class="menu-item">
+        <span class="menu-title">帮助</span>
+        <div class="menu-dropdown">
+            <div class="menu-option" data-action="about">关于</div>
+        </div>
+    </div>
+</nav>
+
+<!-- 工具选项栏 -->
+<div class="tool-options-bar" id="toolOptionsBar">
+    
+    
+    
+    <!-- 工具选项容器 -->
+    <div id="customToolOptions" style="display: contents;">
+        <!-- 画笔/铅笔/橡皮工具选项 -->
+        <div class="tool-options" id="brushOptions" style="display: none;">
+            <label>大小：</label>
+            <input type="range" id="toolBrushSize" min="1" max="50" value="3">
+            <span id="toolBrushSizeLabel">3</span>
+            <span style="margin-left: 5px;">px</span>
+            <!-- 橡皮形状选择 -->
+            <span id="eraserShapeContainer" style="display: none; margin-left: 20px;">
+                <label>形状：</label>
+                <select id="eraserShape">
+                    <option value="circle">圆形</option>
+                    <option value="square">正方形</option>
+                </select>
+            </span>
+        </div>
+        <!-- 移动工具选项 -->
+        <div class="tool-options" id="moveOptions" style="display: none;">
+            <label>
+                <input type="checkbox" id="autoSelect">
+                自动选择图层
+            </label>
+        </div>
+        <!-- 矩形选区工具选项 -->
+        <div class="tool-options" id="rectSelectOptions" style="display: none;">
+            <label>选区模式：</label>
+            <select id="selectionMode">
+                <option value="new">新选区</option>
+                <option value="add">添加到选区</option>
+                <option value="subtract">从选区减去</option>
+                <option value="intersect">与选区交叉</option>
+            </select>
+        </div>
+    
+    </div>
+    <!-- 插件加载状态 -->
+    <div id="script-loader">
+        <div id="loader-status">正在加载插件...</div>
+    </div>
+</div>
+
+<input type="file" id="fileInput" accept=".psd" style="display: none;">
+
+<div class="main-container">
+    <!-- 左侧工具栏 -->
+    <div class="tools-panel">
+        <button class="tool-btn" id="toolPencil" title="铅笔 (P)" data-weight="10">✏️</button>
+        <button class="tool-btn" id="toolEraser" title="橡皮 (E)" data-weight="30">🧽</button>
+        <button class="tool-btn" id="toolPicker" title="取色器 (I)" data-weight="40">🧪</button>
+        <div style="height: 10px;"></div>
+        <button class="tool-btn" id="toolRectSelect" title="矩形选区 (M)" data-weight="60">⬚</button>
+        <div style="height: 10px;"></div>
+        <input type="color" id="colorPicker" value="#000000" title="颜色选择">
+    </div>
+
+    <!-- 中间画布 -->
+    <div class="workspace" id="workspace">
+        <div class="canvas-container" id="canvasContainer">
+            <!-- 主显示 Canvas -->
+            <canvas id="displayCanvas" width="64" height="64"></canvas>
+        </div>
+    </div>
+
+    <!-- 右侧图层面板 -->
+    <div class="layers-panel">
+        <div class="panel-header">图层</div>
+        <div class="layer-list" id="layerList">
+            <!-- 图层列表项将在这里生成 -->
+        </div>
+        <div class="layer-controls">
+            <button id="addLayerBtn" title="新建图层">➕</button>
+            <button id="addGroupBtn" title="新建文件夹">📁</button>
+            <button id="delLayerBtn" title="删除图层">🗑️</button>
+        </div>
+    </div>
+
+    <!-- 自定义面板容器 -->
+    <div class="custom-panels-container" id="customPanelsContainer">
+        <!-- 自定义面板将在这里动态生成 -->
+    </div>
+</div>
+
+<div class="status-bar">
+    <span id="coordInfo">X: 0, Y: 0</span>
+    <span>画布: <span id="canvasSize">64 × 64</span></span>
+    <span>
+        <button id="zoomOut" style="padding: 2px 6px; margin-right: 4px;" title="缩小">➖</button>
+        <button id="zoomIn" style="padding: 2px 6px; margin-right: 4px;" title="放大">➕</button>
+        缩放: <span id="zoomVal">100%</span>
+    </span>
+</div>
+
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/load_script.js"></script>
+
+    <!-- 关于对话框 -->
+    <div id="aboutDialog" class="dialog-overlay" style="display: none;">
+        <div class="dialog-box" style="max-width: 400px;">
+            <div class="dialog-title">关于 XPhotoShop</div>
+            <div style="margin-bottom: 20px; line-height: 1.5;">
+                <p><strong>版本：</strong> v1.0</p>
+                <p><strong>作者：</strong> 风的影子</p>
+                <p><strong>开源地址：</strong> </p>
+                <a href="https://github.com/fengdeyingzi/XPhotoShop" target="_blank" style="color: var(--accent-color);">
+                    https://github.com/fengdeyingzi/XPhotoShop
+                </a>
+                <p style="margin-top: 15px;">
+                    这是一个基于 Web 的 Photoshop 风格图像编辑器，支持 PSD 文件编辑和导出。插件化开发模式（scripts文件夹），并完美兼容油猴插件，既可以通过油猴加载插件，也可以配置插件列表从内部加载插件，通过插件的方式无限拓展功能
+                </p>
+            </div>
+            <div class="dialog-buttons">
+                <button class="dialog-btn dialog-btn-ok" id="aboutDialogClose">确定</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

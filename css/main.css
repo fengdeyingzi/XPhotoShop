@@ -1,0 +1,780 @@
+:root {
+    --bg-color: #2b2b2b;
+    --panel-color: #3c3f41;
+    --item-active: #4a4d4f;
+    --text-color: #dcdcdc;
+    --accent-color: #4a90e2;
+    --border-color: #111;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* 兼容旧浏览器 */
+    height: 100dvh; /* 核心：适配移动端动态视口，减去地址栏高度 */
+    overflow: hidden;
+    user-select: none;
+    overflow-y: hidden;
+    /* iOS 强力全屏修正 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+/* --- Header --- */
+header {
+    background-color: var(--panel-color);
+    padding: 8px 15px;
+    padding-top: max(8px, env(safe-area-inset-top)); /* 适配刘海屏安全区域 */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-bottom: 1px solid var(--border-color);
+    height: 30px;
+    box-sizing: content-box; /* 确保 padding 不影响高度计算 */
+}
+
+/* --- Menu Bar --- */
+
+ .menu-bar {
+    background-color: var(--panel-color);
+    display: flex;
+    flex-wrap: wrap; 
+    border-bottom: 1px solid var(--border-color);
+    font-size: 13px;
+    touch-action: manipulation;
+    position: relative;
+    z-index: 9999; 
+    overflow: visible;
+}
+
+/* 移动端适配：缩小字体和间距，尽量在一行显示 */
+@media (max-width: 600px) {
+    .menu-bar {
+        font-size: 11px;
+    }
+    .menu-title {
+        padding: 6px 8px; /* 减小左右内边距 */
+    }
+}
+
+.menu-item {
+    position: relative;
+    z-index: 1;
+}
+
+.menu-title {
+    display: block;
+    padding: 6px 12px;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.menu-title:hover {
+    background-color: var(--item-active);
+}
+
+.menu-item.active .menu-title {
+    background-color: var(--item-active);
+}
+
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--panel-color);
+    border: 1px solid var(--border-color);
+    min-width: 180px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 10000;
+}
+
+.menu-item.active .menu-dropdown {
+    display: block;
+}
+
+.menu-option {
+    padding: 8px 16px;
+    cursor: pointer;
+    touch-action: manipulation;
+    background-color: var(--panel-color);
+}
+
+.menu-option:hover {
+    background-color: var(--accent-color);
+}
+
+.menu-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 4px 0;
+}
+
+/* --- Tool Options Bar --- */
+.tool-options-bar {
+    background-color: var(--panel-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 15px;
+    font-size: 12px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+.tool-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tool-options label {
+    color: var(--text-color);
+    margin: 0;
+}
+
+.tool-options select {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.tool-options select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.tool-options input[type="checkbox"] {
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.tool-options input[type="range"] {
+    width: 100px;
+    cursor: pointer;
+}
+
+.tool-options span {
+    color: var(--text-color);
+    min-width: 30px;
+}
+
+.toolbar-top { display: flex; gap: 10px; }
+
+button, .file-btn {
+    background-color: #555;
+    border: 1px solid #222;
+    color: white;
+    padding: 4px 12px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12px;
+}
+button:hover, .file-btn:hover { background-color: #666; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+input[type="file"] { display: none; }
+
+/* --- Main Layout --- */
+.main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* --- Left: Tools --- */
+.tools-panel {
+    width: 50px;
+    background-color: var(--panel-color);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    gap: 8px;
+}
+
+.tool-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    border: 1px solid transparent;
+}
+.tool-btn.active {
+    background-color: #215aa8;
+    border-color: var(--accent-color);
+    box-shadow: inset 0 0 8px rgba(74, 144, 226, 0.4), 0 0 4px rgba(74, 144, 226, 0.3);
+}
+
+input[type="color"] {
+    width: 36px;
+    height: 36px;
+    border: none;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.tool-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+}
+
+.tool-option input[type="range"] {
+    cursor: pointer;
+}
+
+/* --- Center: Workspace --- */
+.workspace {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    background-color: #1e1e1e;
+    position: relative;
+    touch-action: none;
+}
+
+.canvas-container {
+    position: relative;
+    background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+canvas {
+    display: block;
+    image-rendering: pixelated;
+}
+
+canvas.cursor-none {
+    cursor: none;
+}
+
+canvas.cursor-crosshair {
+    cursor: crosshair;
+}
+
+canvas.cursor-move {
+    cursor: move;
+}
+
+canvas.cursor-picker {
+    cursor: crosshair;
+}
+
+/* --- Right: Layers --- */
+.layers-panel {
+    width: 200px;
+    background-color: var(--panel-color);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    padding: 8px;
+    background: #333;
+    font-size: 12px;
+    font-weight: bold;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.layer-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.layer-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #444;
+    cursor: pointer;
+    background-color: var(--panel-color);
+    position: relative;
+}
+
+.layer-item:hover { background-color: #454545; }
+.layer-item.active { background-color: #215aa8; }
+
+.layer-item.dragging {
+    opacity: 0.5;
+}
+
+.layer-item.drop-above::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--accent-color);
+    z-index: 10;
+}
+
+.layer-item.drop-below::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--accent-color);
+    z-index: 10;
+}
+
+.layer-item.drop-into {
+    background-color: rgba(74, 144, 226, 0.3);
+    box-shadow: inset 0 0 0 2px var(--accent-color);
+}
+
+.layer-vis {
+    width: 20px;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 5px;
+    color: #aaa;
+}
+.layer-vis.hidden { color: #555; }
+
+.layer-thumb {
+    width: 24px;
+    height: 24px;
+    background: white;
+    margin-right: 8px;
+    border: 1px solid #000;
+    image-rendering: pixelated;
+    display: block;
+}
+
+.layer-name {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.layer-arrow {
+    width: 16px;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 4px;
+    font-size: 10px;
+    user-select: none;
+}
+
+.layer-folder-icon {
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+.layer-controls {
+    padding: 8px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+}
+
+.status-bar {
+    background: var(--panel-color);
+    border-top: 1px solid var(--border-color);
+    padding: 2px 10px;
+    font-size: 11px;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* --- Custom Dialog --- */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.dialog-box {
+    background-color: var(--panel-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    min-width: 300px;
+    padding: 20px;
+}
+
+.dialog-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+.dialog-input {
+    width: 100%;
+    padding: 8px;
+    background-color: var(--bg-color);
+    border: 1px solid #555;
+    border-radius: 3px;
+    color: var(--text-color);
+    font-size: 13px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+}
+
+.dialog-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.dialog-btn {
+    padding: 6px 16px;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.dialog-btn-ok {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.dialog-btn-ok:hover {
+    background-color: #5a9ef2;
+}
+
+.dialog-btn-cancel {
+    background-color: #555;
+    color: var(--text-color);
+}
+
+.dialog-btn-cancel:hover {
+    background-color: #666;
+}
+
+/* --- Context Menu --- */
+.context-menu {
+    position: fixed;
+    background-color: var(--panel-color);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    min-width: 150px;
+    padding: 4px 0;
+    font-size: 12px;
+}
+
+.context-menu-item {
+    padding: 6px 16px;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.context-menu-item:hover {
+    background-color: var(--accent-color);
+}
+
+.context-menu-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.context-menu-item.disabled:hover {
+    background-color: transparent;
+}
+
+.context-menu-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 4px 0;
+}
+
+/* --- Toast Notifications --- */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background-color: var(--panel-color);
+    color: var(--text-color);
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    font-size: 13px;
+    min-width: 200px;
+    max-width: 400px;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease;
+    border-left: 4px solid;
+}
+
+.toast-show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-info {
+    border-left-color: var(--accent-color);
+}
+
+.toast-success {
+    border-left-color: #4caf50;
+}
+
+.toast-warning {
+    border-left-color: #ff9800;
+}
+
+.toast-error {
+    border-left-color: #f44336;
+}
+
+/* Mobile toast (Android style) */
+.toast-mobile {
+    top: auto;
+    bottom: 80px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    align-items: center;
+}
+
+.toast-mobile .toast {
+    transform: translateY(100px);
+    border-left: none;
+    border-radius: 24px;
+    max-width: 90vw;
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+.toast-mobile .toast-show {
+    transform: translateY(0);
+}
+
+/* --- Mobile Adaptations --- */
+@media (max-width: 768px) {
+    .main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    max-height: 80vh;
+    }
+    header {
+        padding: 6px 10px;
+        height: 24px;
+        font-size: 11px;
+    }
+
+    /* .menu-bar {
+        font-size: 11px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch; /* iOS 滚动优化 */
+    } */
+
+    .menu-title {
+        padding: 10px 12px; /* 增加触摸目标大小 */
+        min-height: 36px; /* 确保触摸目标足够大 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tool-options-bar {
+        padding: 6px 10px;
+        font-size: 11px;
+        flex-wrap: wrap;
+    }
+
+    .tools-panel {
+        width: 40px;
+        padding-top: 5px;
+        gap: 5px;
+    }
+
+    .tool-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    input[type="color"] {
+        width: 32px;
+        height: 32px;
+    }
+
+    .layers-panel {
+        width: 150px;
+    }
+
+    .layer-item {
+        padding: 6px;
+    }
+
+    .layer-thumb {
+        width: 20px;
+        height: 20px;
+    }
+
+    .layer-name {
+        font-size: 11px;
+    }
+
+    .status-bar {
+        font-size: 10px;
+        padding: 2px 5px;
+        flex-wrap: wrap;
+    }
+
+    .toast-container:not(.toast-mobile) {
+        top: 10px;
+        right: 10px;
+    }
+
+    .toast-container:not(.toast-mobile) .toast {
+        min-width: auto;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        position: relative;
+    }
+
+    .layers-panel {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+        transform: translateX(100%);
+        transition: transform 0.3s;
+    }
+
+    .layers-panel.mobile-show {
+        transform: translateX(0);
+    }
+
+    .tool-options input[type="range"] {
+        width: 80px;
+    }
+}
+
+/* --- Custom Panels Container --- */
+.custom-panels-container {
+    min-width: 200px;
+    max-width: 500px;
+    width: auto;
+    background-color: var(--panel-color);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    gap: 8px;
+    padding: 8px;
+    resize: horizontal;
+    min-height: 0;
+    height: 100%;
+}
+
+.custom-panel {
+    background-color: var(--panel-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-panel.dragging {
+    opacity: 0.5;
+}
+
+.custom-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background: #333;
+    border-bottom: 1px solid var(--border-color);
+    cursor: move;
+    user-select: none;
+}
+
+.custom-panel-title {
+    font-size: 12px;
+    font-weight: bold;
+    flex: 1;
+}
+
+.custom-panel-close {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 2px 6px;
+    font-size: 14px;
+    border-radius: 2px;
+}
+
+.custom-panel-close:hover {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.custom-panel-content {
+    padding: 8px;
+    overflow-y: auto;
+    overflow-x: auto;
+    flex: 1;
+    min-height: 50px;
+}
